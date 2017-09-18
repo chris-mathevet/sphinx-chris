@@ -50,7 +50,7 @@ class EasyPythonDirective(Directive):
             headers = {'content-type': 'application/json'}
             payload={'moduleEns':contenu, 'type':self.options["language"]}
             payload.update(options)
-            res=requests.post("http://localhost:8000/api/v1/gestion_exercice/", data=json.dumps(payload), headers=headers)
+            res=requests.post("http://localhost/api/v1/gestion_exercice/", data=json.dumps(payload), headers=headers)
             dico = res.json()
             if 'traceback' in dico:
                 print(dico["traceback"])
