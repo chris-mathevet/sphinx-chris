@@ -1,7 +1,6 @@
 # coding: utf8
 from docutils import nodes
 from docutils.parsers.rst import Directive
-from sphinx.util.compat import make_admonition
 from sphinx.locale import _
 from docutils.parsers.rst import directives
 import os
