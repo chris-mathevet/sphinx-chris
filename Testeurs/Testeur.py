@@ -10,9 +10,10 @@ import jsonpickle
 # affiche du json
 
 class Testeur():
-    def __init__(self, codeTest, codeATester):
+    def __init__(self, codeTest, codeATester, **kwargs):
         self.codeTest = codeTest
         self.codeATester = codeATester
+        self.metainfos = kwargs
 
     @abc.abstractmethod
     def writeTestFiles(self, directory):

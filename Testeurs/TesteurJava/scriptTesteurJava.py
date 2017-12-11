@@ -5,8 +5,9 @@ import os
 import subprocess
 import json
 import resource,psutil
+import sys
 
-nomClasse = "MaClasse.java"
+nomClasse = sys.argv[1]
 
 
 def limite_resources():

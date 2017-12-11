@@ -25,12 +25,13 @@ public class TesteurEasyPython {
 
 class TesteurJava(Testeur):
 
-    def __init__(self, *args ):
+    def __init__(self, *args, **kwargs ):
         """
             entree : nomclasse, TestEnseignant, SolutionEtu
         """
-        super().__init__(*args)
-        self.nomClasse = "MaClasse.java"
+        super().__init__(*args, **kwargs)
+        #self.nomClasse = "MaClasse.java"
+        self.nomClasse = self.metainfos.get("nomclasse","MaClasse.java")
 
     def writeTestFiles(self, directory):
 
@@ -44,7 +45,7 @@ class TesteurJava(Testeur):
             classe_solution.write(self.codeATester)
 
         with open(os.path.join(directory,"makefile"), "w") as file:
-            file.write("all:\n\tpython3 scriptTesteurJava.py\n\ninfos:\n\techo {}")
+            file.write("all:\n\tpython3 scriptTesteurJava.py "+self.nomClasse+"\n\ninfos:\n\techo {}")
 
         shutil.copyfile(os.path.join(os.path.dirname(__file__),"scriptTesteurJava.py"),\
                         os.path.join(directory,"scriptTesteurJava.py"))
