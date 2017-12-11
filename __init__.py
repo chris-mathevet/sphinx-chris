@@ -87,10 +87,11 @@ class EasyPythonDirective(Directive):
 
     possibleMeta = {"nomclasse"}
     def run(self):
-        metas = {x:self.options[x] for x in self.possibleMeta if x in self.options}
-        self.options.update({"metainfos":metas})
         env = self.state.document.settings.env
         (relative_filename, absolute_filename)=env.relfn2path(self.arguments[0])
+        metas = {"nomclasse" : os.path.basename(absolute_filename) }
+        metas.update({x:self.options[x] for x in self.possibleMeta if x in self.options})
+        self.options.update({"metainfos":metas})
         print("OPTIONS:" + str(self.options) + relative_filename )
 
         donnees= self.getExercice(absolute_filename,self.options) if env.app.config.easypython_production else {
