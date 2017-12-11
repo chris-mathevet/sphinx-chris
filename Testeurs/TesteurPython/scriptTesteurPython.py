@@ -5,7 +5,7 @@ import sys
 import traceback
 import inspect
 import time
-import json
+import jsonpickle
 
 class resultats:
     def __init__(self):
@@ -25,11 +25,11 @@ class resultats:
             return str(self._messages)
         return str(self._messages)
     def dumps(self):
-        return json.dumps(self.__dict__)
+        return jsonpickle.dumps(self.__dict__,keys=True)
     def to_dict(self):
         return self.__dict__
     def loads(chaine):
-        d=json.loads(chaine)
+        d=jsonpickle.loads(chaine,keys=True)
         self._valide=d["_valide"]
         self._messages=d["_messages"]
         self._temps=d["_temps"]
@@ -160,7 +160,6 @@ class ExercicePython:
         attrs=["messages","messagesErreur","messagesInfo","entrees_visibles","entrees_invisibles","solutions_visibles","solutions_invisibles","temps","nom_solution","arguments"]
         res={attr:self.__dict__[attr] for attr in attrs if self.__dict__[attr] }
         res["solutions_visibles"]=[(str(list(x))[1:-1],str(y)) for (x,y) in self.solutions_visibles]
-        res["solutions_invisibles"]=[(str(list(x))[1:-1],str(y)) for (x,y) in self.solutions_invisibles]
         return res
 
     def __init__(self,module):
@@ -228,7 +227,7 @@ if __name__ == "__main__" :
     if args.infos:
         e = ExercicePython("ModuleEns")
         e.tester_solution_ens()
-        print(json.dumps(e.toDict()))
+        print(jsonpickle.dumps(e.toDict(),keys=True))
     else:
         e = ExercicePython("ModuleEns")
         e.tester_solution_ens()
