@@ -3,7 +3,7 @@ __author__ = 'julien'
 import abc
 import subprocess
 import tempfile
-import json
+import jsonpickle
 
 
 # Le testeur doit générer un makefile avec une optin all et une option infos . Chaque option doit exécuter du code qui
@@ -22,10 +22,10 @@ class Testeur():
         with tempfile.TemporaryDirectory() as tmpdirname:
             self.writeTestFiles(tmpdirname)
             sortie = subprocess.run("cd "+tmpdirname+"; make -s all", shell=True, stdout=subprocess.PIPE)
-            return json.loads(sortie.stdout.decode())
+            return jsonpickle.loads(sortie.stdout.decode(), keys=True)
 
     def infos(self):
         with tempfile.TemporaryDirectory() as tmpdirname:
             self.writeTestFiles(tmpdirname)
             sortie = subprocess.run("cd "+tmpdirname+"; make -s infos", shell=True, stdout=subprocess.PIPE)
-            return json.loads(sortie.stdout.decode())
+            return jsonpickle.loads(sortie.stdout.decode(), keys=True)
