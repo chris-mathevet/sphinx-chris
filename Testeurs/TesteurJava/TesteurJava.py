@@ -35,16 +35,16 @@ class TesteurJava(Testeur):
 
     def writeTestFiles(self, directory):
 
-        with open(os.path.join(directory,"MaClasseTest.java"),"w") as classe_test:
+        with open(os.path.join(directory,"MaClasseTest.java"),"w",encoding="utf-8") as classe_test:
             classe_test.write(self.codeTest.decode())
 
-        with open(os.path.join(directory,"TesteurEasyPython.java"),"w") as classe_testeur :
+        with open(os.path.join(directory,"TesteurEasyPython.java"),"w",encoding="utf-8") as classe_testeur :
             classe_testeur.write(TesteurEasyPython.substitute({"NomClasseTest":"MaClasseTest"}))
 
-        with open(os.path.join(directory,self.nomClasse),"w") as classe_solution:
+        with open(os.path.join(directory,self.nomClasse),"w",encoding="utf-8") as classe_solution:
             classe_solution.write(self.codeATester)
 
-        with open(os.path.join(directory,"makefile"), "w") as file:
+        with open(os.path.join(directory,"makefile"), "w",encoding="utf-8") as file:
             file.write("all:\n\tpython3 scriptTesteurJava.py "+self.nomClasse+"\n\ninfos:\n\techo {}")
 
         shutil.copyfile(os.path.join(os.path.dirname(__file__),"scriptTesteurJava.py"),\

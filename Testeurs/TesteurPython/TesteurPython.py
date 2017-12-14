@@ -18,10 +18,10 @@ class TesteurPython(Testeur):
             file.write("all:\n\tpython3 scriptTesteurPython.py\n\n")
             file.write("infos:\n\tpython3 scriptTesteurPython.py --infos")
 
-        with open(os.path.join(directory,"ModuleEns.py"), "w") as file:
+        with open(os.path.join(directory,"ModuleEns.py"), "w",encoding="utf-8") as file:
             file.write(PRELUDE_SOLUTION)
             file.write(self.codeTest.decode())
-        with open(os.path.join(directory,"ModuleEtu.py"), "w") as file:
+        with open(os.path.join(directory,"ModuleEtu.py"), "w",encoding="utf-8") as file:
             file.write(self.codeATester)
         shutil.copyfile(os.path.join(os.path.dirname(__file__),"scriptTesteurPython.py"),\
                         os.path.join(directory,"scriptTesteurPython.py"))
