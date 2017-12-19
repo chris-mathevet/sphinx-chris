@@ -19,7 +19,7 @@ class EasyPythonDirective(Directive):
 
 
     def testExercice(self, pathFichierModuleEns,options):
-        from .Testeurs import TesteurPython
+        from easypython_testeur import TesteurPython
         if(options["language"]=="python"):
             print("Traitement du fichier"+str(pathFichierModuleEns))
             with open(pathFichierModuleEns,"rb") as e:
