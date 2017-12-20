@@ -7,5 +7,5 @@ setup(
     author_email='julien.robert@univ-orleans.fr',
     packages=find_packages(),
     install_requires=[],
-    dependency_links=['git+https://gitlab.com/jrobert/easypython-testeur.git#egg=easypython-testeur'],
+    dependency_links=['git+https://gitlab.com/jrobert/easypython-testeur.git#egg=easypython-testeur-0.13'],
 )
