@@ -7,5 +7,5 @@ setup(
     author_email='julien.robert@univ-orleans.fr',
     packages=find_packages(),
     install_requires=[],
-    dependency_links=['git+https://gitlab.com/jrobert/easypython-testeur.git'],
+    dependency_links=['git+https://gitlab.com/jrobert/easypython-testeur.git#egg=sphinx-easypython'],
 )
