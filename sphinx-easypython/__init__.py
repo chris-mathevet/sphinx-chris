@@ -9,47 +9,52 @@ import json
 
 os.environ['NO_PROXY'] = 'localhost'
 
+
 class EasyPythonNode(nodes.Element):
     pass
+
 
 class Exemples(nodes.Admonition, nodes.Element):
     pass
 
+
 class EasyPythonDirective(Directive):
 
-
-    def testExercice(self, pathFichierModuleEns,options):
+    def test_exercice(self, pathFichierModuleEns, options):
         from easypython_testeur import TesteurPython
-        if(options["language"]=="python"):
-            print("Traitement du fichier"+str(pathFichierModuleEns))
-            with open(pathFichierModuleEns,"rb") as e:
-                testeur = TesteurPython(e.read(), "")
-                #print(testeur.test())
+        if options["language"] == "python":
+            print("Traitement du fichier" + str(pathFichierModuleEns))
+            with open(pathFichierModuleEns, "rb") as fichier_module_ens:
+                testeur = TesteurPython(fichier_module_ens.read(), "")
+                # print(testeur.test())
                 res = testeur.infos()
                 if "messagesErreur" in res:
                     print("Fichier incorrect:")
-                    for m in res["messagesErreur"]:
-                        print("\t"+str(m))
+                    for message_erreur in res["messagesErreur"]:
+                        print("\t" + str(message_erreur))
                 else:
-                    print("\tLa fonction proposée s'appelle : " + res["nom_solution"])
+                    print("\tLa fonction proposée s'appelle : " +
+                          res["nom_solution"])
                     if "solutions_visibles" in res:
                         print("\tENTREES VISIBLES DES ETUDIANTS:")
-                        for (e,s) in res["solutions_visibles"]:
-                            print("\t\t"+res["nom_solution"] + "(" + str(e) + ") renvoie " + str(s)) 
+                        for (entree, sortie) in res["solutions_visibles"]:
+                            print("\t\t" + res["nom_solution"] +
+                                  "(" + str(entree) + ") renvoie " + str(sortie))
                     if "solutions_invisibles" in res:
                         print("\tENTREES INVISIBLES DES ETUDIANTS:")
-                        for (e,s) in res["solutions_invisibles"]:
-                            print("\t\t"+res["nom_solution"] + "(" + str(e) + ") renvoie " + str(s)) 
+                        for (entree, sortie) in res["solutions_invisibles"]:
+                            print("\t\t" + res["nom_solution"] +
+                                  "(" + str(entree) + ") renvoie " + str(sortie))
                 return res
 
-
-    def getExercice(self,pathFichierModuleEns,options):
+    def getExercice(self, pathFichierModuleEns, options):
         with open(pathFichierModuleEns) as fichier:
-            contenu=''.join(fichier.readlines())
+            contenu = ''.join(fichier.readlines())
             headers = {'content-type': 'application/json'}
-            payload={'moduleEns':contenu, 'type':self.options["language"]}
+            payload = {'moduleEns': contenu, 'type': self.options["language"]}
             payload.update(options)
-            res=requests.post("http://localhost/api/v1/gestion_exercice/", data=json.dumps(payload), headers=headers)
+            res = requests.post("http://localhost/api/v1/gestion_exercice/",
+                                data=json.dumps(payload), headers=headers)
             dico = res.json()
             if 'traceback' in dico:
                 print(dico["traceback"])
@@ -86,61 +91,77 @@ class EasyPythonDirective(Directive):
     }
 
     possibleMeta = {"nomclasse"}
+
     def run(self):
         env = self.state.document.settings.env
-        (relative_filename, absolute_filename)=env.relfn2path(self.arguments[0])
-        metas = {"nomclasse" : os.path.basename(absolute_filename) }
-        metas.update({x:self.options[x] for x in self.possibleMeta if x in self.options})
-        self.options.update({"metainfos":metas})
-        print("OPTIONS:" + str(self.options) + relative_filename )
+        (relative_filename, absolute_filename) = env.relfn2path(
+            self.arguments[0])
+        metas = {"nomclasse": os.path.basename(absolute_filename)}
+        metas.update({x: self.options[x]
+                      for x in self.possibleMeta if x in self.options})
+        self.options.update({"metainfos": metas})
+        print("OPTIONS:" + str(self.options) + relative_filename)
 
-        donnees= self.getExercice(absolute_filename,self.options) if env.app.config.easypython_production else {
-        'hashCode': '1234',
-        'metaInfos': self.testExercice(absolute_filename,self.options)
-        #{
-        #      'arguments': ['argument_bidon', 'argument_bidon'],
-        #      'solutions_visibles': [["exemple bidon", "sortie bidon"], ["exemple bidon", "sortie bidon"]],
-        #      'nom_solution': 'fonction_bidon',
-        #    }
+        donnees = self.getExercice(absolute_filename, self.options) if env.app.config.easypython_production else {
+            'hashCode': '1234',
+            'metaInfos': self.test_exercice(absolute_filename, self.options),
+            #{
+            #      'arguments': ['argument_bidon', 'argument_bidon'],
+            #      'solutions_visibles': [["exemple bidon", "sortie bidon"], ["exemple bidon", "sortie bidon"]],
+            #      'nom_solution': 'fonction_bidon',
+            #    }
         }
-        if(self.options["language"]=="python"):
-            zoneExercice=EasyPythonNode()
-            exemples=Exemples()
-            exemples["exemples"]=donnees["metaInfos"]["solutions_visibles"]
-            zoneExercice["prototype_solution"]="def " + donnees["metaInfos"]["nom_solution"] + "("+','.join(donnees["metaInfos"]["arguments"])+"):\n    return None"
-            zoneExercice["hash"]= donnees["hashCode"]
-            zoneExercice["language"]=self.options["language"]
+        if(self.options["language"] == "python"):
+            zoneExercice = EasyPythonNode()
+            exemples = Exemples()
+            exemples["exemples"] = donnees["metaInfos"]["solutions_visibles"]
+            zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
+                "(" + ','.join(donnees["metaInfos"]
+                               ["arguments"]) + "):\n    return None"
+            zoneExercice["hash"] = donnees["hashCode"]
+            zoneExercice["language"] = self.options["language"]
             return [exemples, zoneExercice]
-        if(self.options["language"]=="java"):
-            zoneExercice=EasyPythonNode()
-            zoneExercice["prototype_solution"]="Votre classe.."
-            zoneExercice["hash"]= donnees["hashCode"]
-            zoneExercice["language"]=self.options["language"]
+        if(self.options["language"] == "java"):
+            zoneExercice = EasyPythonNode()
+            zoneExercice["prototype_solution"] = "Votre classe.."
+            zoneExercice["hash"] = donnees["hashCode"]
+            zoneExercice["language"] = self.options["language"]
             return [zoneExercice]
 
+
 def visit_exemples_node(self, node):
-        self.body.append("<ul class='list-group'>")
-        for (entree,sortie) in node["exemples"]:
-            self.body.append("<li class='list-group-item'> Sur l'entr&eacute;e <code>" + str(entree) + "</code> votre solution doit renvoyer <code>" + str(sortie) + "</code>.</li>")
-        self.body.append("</ul>")
+    self.body.append("<ul class='list-group'>")
+    for (entree, sortie) in node["exemples"]:
+        self.body.append("<li class='list-group-item'> Sur l'entr&eacute;e <code>" + str(
+            entree) + "</code> votre solution doit renvoyer <code>" + str(sortie) + "</code>.</li>")
+    self.body.append("</ul>")
+
 
 def visit_easypython_node(self, node):
-        self.body.append("<div hash='"+node["hash"]+"' language='"+node["language"]+"' class='easypython clearfix'>")
-        self.body.append(node["prototype_solution"])
-        self.body.append("</div>")
+    self.body.append("<div hash='" + node["hash"] + "' language='" +
+                     node["language"] + "' class='easypython clearfix'>")
+    self.body.append(node["prototype_solution"])
+    self.body.append("</div>")
+
 
 def depart_easypython_node(self, node):
     pass
 
+
 def latex_departure(self, node):
     pass
-def visit_latex(self,node):
+
+
+def visit_latex(self, node):
     pass
+
 
 def setup(app):
     app.add_config_value('easypython_production', False, 'html')
-    app.add_node(EasyPythonNode, html=(visit_easypython_node, depart_easypython_node), latex=(visit_latex, latex_departure))
-    app.add_node(Exemples, html=(visit_exemples_node, depart_easypython_node),latex=(visit_latex, latex_departure))
+    app.add_node(EasyPythonNode, html=(visit_easypython_node,
+                                       depart_easypython_node), latex=(visit_latex, latex_departure))
+    app.add_node(Exemples, html=(visit_exemples_node,
+                                 depart_easypython_node), latex=(visit_latex, latex_departure))
 
     app.add_directive('easypython', EasyPythonDirective)
 
