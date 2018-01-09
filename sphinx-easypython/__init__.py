@@ -25,7 +25,7 @@ class EasyPythonDirective(Directive):
         if options["language"] == "python":
             print("Traitement du fichier" + str(pathFichierModuleEns))
             with open(pathFichierModuleEns, "rb") as fichier_module_ens:
-                testeur = TesteurPython(fichier_module_ens.read(), "")
+                testeur = TesteurPython(fichier_module_ens.read(), "", False)
                 # print(testeur.test())
                 res = testeur.infos()
                 if "messagesErreur" in res:
@@ -88,6 +88,7 @@ class EasyPythonDirective(Directive):
         "uuid": directives.unchanged,
         "titre": directives.unchanged,
         "nomclasse": directives.unchanged,
+        "nom_classe_test": directives.unchanged,
     }
 
     possibleMeta = {"nomclasse"}
@@ -96,7 +97,7 @@ class EasyPythonDirective(Directive):
         env = self.state.document.settings.env
         (relative_filename, absolute_filename) = env.relfn2path(
             self.arguments[0])
-        metas = {"nomclasse": os.path.basename(absolute_filename)}
+        metas = {"nom_classe_test": os.path.basename(os.path.splitext(absolute_filename)[0])}
         metas.update({x: self.options[x]
                       for x in self.possibleMeta if x in self.options})
         self.options.update({"metainfos": metas})
