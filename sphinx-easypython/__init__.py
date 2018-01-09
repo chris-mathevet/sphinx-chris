@@ -91,7 +91,7 @@ class EasyPythonDirective(Directive):
         "nom_classe_test": directives.unchanged,
     }
 
-    possibleMeta = {"nomclasse"}
+    possibleMeta = {"nomclasse", "nom_class_test"}
 
     def run(self):
         env = self.state.document.settings.env
