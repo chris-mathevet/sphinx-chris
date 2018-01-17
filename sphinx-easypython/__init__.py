@@ -128,6 +128,12 @@ class EasyPythonDirective(Directive):
             zoneExercice["hash"] = donnees["hashCode"]
             zoneExercice["language"] = self.options["language"]
             return [zoneExercice]
+        if(self.options["language"] == "generique"):
+            zoneExercice = EasyPythonNode()
+            zoneExercice["prototype_solution"] = "Votre classe.."
+            zoneExercice["hash"] = donnees["hashCode"]
+            zoneExercice["language"] = self.options["language"]
+            return [zoneExercice]
 
 
 def visit_exemples_node(self, node):
