@@ -21,7 +21,7 @@ class Exemples(nodes.Admonition, nodes.Element):
 class EasyPythonDirective(Directive):
 
     def test_exercice(self, pathFichierModuleEns, options):
-        from easypython_testeur import TesteurPython
+        from easypython_testeur.TesteurPython import TesteurPython
         if options["language"] == "python":
             print("Traitement du fichier" + str(pathFichierModuleEns))
             with open(pathFichierModuleEns, "rb") as fichier_module_ens:
