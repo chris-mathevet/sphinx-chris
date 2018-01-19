@@ -128,7 +128,7 @@ class EasyPythonDirective(Directive):
             zoneExercice["hash"] = donnees["hashCode"]
             zoneExercice["language"] = self.options["language"]
             return [zoneExercice]
-        if(self.options["language"] == "generique" || self.options["language"] == "IJVM" ):
+        if(self.options["language"] == "generique" or self.options["language"] == "IJVM" ):
             zoneExercice = EasyPythonNode()
             zoneExercice["prototype_solution"] = "Votre réponse"
             zoneExercice["hash"] = donnees["hashCode"]
