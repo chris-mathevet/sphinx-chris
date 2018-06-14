@@ -61,8 +61,7 @@ class EasyPythonDirective(Directive):
                     print(dico["traceback"])
                 return dico
             except Exception as e:
-                print(res.content)
-                raise Exception(res.content)
+                raise Exception("Requete: " + "http://"+API_URI+"/api/v1/gestion_exercice/" + "  reponse: "+ str(res.content))
 
 
         """
