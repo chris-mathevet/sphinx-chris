@@ -55,10 +55,15 @@ class EasyPythonDirective(Directive):
             payload.update(options)
             res = requests.post("http://"+API_URI+"/api/v1/gestion_exercice/",
                                 data=json.dumps(payload), headers=headers)
-            dico = res.json()
-            if 'traceback' in dico:
-                print(dico["traceback"])
-            return dico
+            try:
+                dico = res.json()
+                if 'traceback' in dico:
+                    print(dico["traceback"])
+                return dico
+            except Exception as e:
+                print(res.content)
+                raise Exception(res.content)
+
 
         """
         {'titre': 'mafonctino',
