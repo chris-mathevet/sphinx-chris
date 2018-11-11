@@ -1,0 +1,17 @@
+.CodeMirror {
+    border: 1px solid black;
+    margin-bottom: 1em;
+}
+
+.panel{
+  margin-top:1em;
+  margin-bottom:1em;
+}
+
+a.headerlink{
+  display: none;
+}
+
+code {
+    white-space: pre-line;
+}

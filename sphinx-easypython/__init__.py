@@ -167,8 +167,22 @@ def visit_latex(self, node):
     pass
 
 
+def add_static(app,env,*reste):
+    app.config.html_static_path.append(os.path.join(os.path.dirname(__file__),'_static'))
+
+
 def setup(app):
-    app.add_config_value('easypython_production', False, 'html')
+    app.add_css_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/codemirror.min.css")
+    app.add_css_file("pcap_base.css")
+    app.add_js_file("pcap.js")
+    app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/codemirror.min.js")
+    app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/python/python.min.js")
+    app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/clike/clike.min.js")
+    app.connect('config-inited', add_static)
+    
+    app.add_config_value('easypython_production', "EasyPythonProduction" in os.environ, 'html')
+    api_route = os.environ.get("PCAP_API_URI",'https://www.univ-orleans.fr/iut-orleans/informatique/intra/ap/api/v1/')
+    app.add_config_value('easypython_api_route', api_route , 'html')
     app.add_node(EasyPythonNode, html=(visit_easypython_node,
                                        depart_easypython_node), latex=(visit_latex, latex_departure))
     app.add_node(Exemples, html=(visit_exemples_node,
