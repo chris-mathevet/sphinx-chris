@@ -6,6 +6,6 @@ setup(
     author='Julien Robert',
     author_email='julien.robert@univ-orleans.fr',
     packages=find_packages(),
-    install_requires=['sphinx','sphinx-bootstrap-theme'],
+    install_requires=['sphinx'],
     dependency_links=[],
 )
