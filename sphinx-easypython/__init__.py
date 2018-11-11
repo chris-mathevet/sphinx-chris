@@ -169,7 +169,7 @@ def visit_latex(self, node):
 
 def add_static(app,env,*reste):
     app.config.html_static_path.append(os.path.join(os.path.dirname(__file__),'_static'))
-
+    app.config.html_context["easypython_api_route"]=app.config.easypython_api_route
 
 def setup(app):
     app.add_css_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/codemirror.min.css")
