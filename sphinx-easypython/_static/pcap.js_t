@@ -5,11 +5,11 @@ function marquerReussi(hash)
 {
     let currentCM   = codemirrors[hash];
     let currentNode = codeNode[hash];
-    currentCM.setOption('readOnly',true);
-    currentNode.children("button").remove();
-    let reussi=$("<div class='alert alert-success' role='alert'>Félicitations !!</div>");
-    if(currentNode.children(".panel").length>0)
-         currentNode.children(".panel").replaceWith(reussi);
+    //currentCM.setOption('readOnly',true);
+    //currentNode.children("button").remove();
+    let reussi=$("<div class='pcap_feliciations'>Félicitations !!</div>");
+    if(currentNode.children(".pcap_resultats").length>0)
+         currentNode.children(".pcap_resultats").replaceWith(reussi);
     else
          currentNode.append(reussi);
 }
@@ -24,30 +24,22 @@ function marquerARetenter(hash, reponse, language)
 
 
 
-    let rate=$("<div class='panel panel-default'></div>");
+    let rate=$("<div class='pcap_resultats'></div>");
     let n = 0;
     for (titre_erreur in reponse["tentative"]){
         n=n+1;
-        let contenu = $(`<ul class='list-group collapse' id='contenu-${n}-${hash}'/>`)
+        let contenu = $(`<ul class='pcap_resultats_liste' id='contenu-${n}-${hash}'/>`)
             for( x of reponse["tentative"][titre_erreur]){
                 contenu.append($(`
-                            <li class="list-group-item">
+                            <li class="pcap_resultats_element">
                             <code>${x}</code>
                             </li>
                             `));
             }
-        rate.append( $(`
-                    <div class='panel-heading clearfix'>${titre_erreur}
-                    <button class="btn btn-default pull-right" type="button" data-toggle="collapse"
-                    data-target="#contenu-${n}-${hash}"
-                    aria-expanded="false" aria-controls="contenu-${n}-${hash}" >
-                    <span class="glyphicon glyphicon-eye-open "></span>
-                    </button>
-                    </div>`));
         rate.append(contenu)
     }
-    if(currentNode.children(".panel").length>0)
-        currentNode.children(".panel").replaceWith(rate);
+    if(currentNode.children(".pcap_resultats").length>0)
+        currentNode.children(".pcap_resultats").replaceWith(rate);
     else
         currentNode.append(rate);
 
@@ -105,7 +97,7 @@ function remplirNoeudCode(noeud)
      var $bouton=$("<button/>", {
           text:'Envoyer',
           click: function(hash, language){return function(){soumettre(hash,language)}}($(this).attr('hash'), $(this).attr('language')),
-          class:'btn btn-primary',
+          class:'pcap_envoyer',
           type:'button'
      })
      codeNode[$(this).attr('hash')]=$(this);

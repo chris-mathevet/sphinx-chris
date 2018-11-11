@@ -15,3 +15,10 @@ a.headerlink{
 code {
     white-space: pre-line;
 }
+
+button .pcap_envoyer{
+	float:right;
+	border-width:0;
+	padding: 10px 20px;
+}
+
