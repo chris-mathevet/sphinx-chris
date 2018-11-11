@@ -22,7 +22,15 @@ button.pcap_envoyer{
 	padding: 10px 20px;
 }
 
+button.pcap_envoyer:hover{
+  background-color: Gainsboro;
+}
+
 .pcap_resultats{
   clear:right;
   padding-top:10px;
+}
+
+.pcap_resultats>div>h1{
+  font-size:larger;
 }
