@@ -36,7 +36,9 @@ function marquerARetenter(hash, reponse, language)
                             </li>
                             `));
             }
-        rate.append(contenu)
+        let erreur = $(`<div><h1>${titre_erreur}</h1></div>`);
+        erreur.append(contenu);
+        rate.append(erreur);
     }
     if(currentNode.children(".pcap_resultats").length>0)
         currentNode.children(".pcap_resultats").replaceWith(rate);

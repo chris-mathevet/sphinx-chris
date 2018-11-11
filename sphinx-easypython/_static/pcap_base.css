@@ -16,9 +16,13 @@ code {
     white-space: pre-line;
 }
 
-button .pcap_envoyer{
+button.pcap_envoyer{
 	float:right;
 	border-width:0;
 	padding: 10px 20px;
 }
 
+.pcap_resultats{
+  clear:right;
+  padding-top:10px;
+}
