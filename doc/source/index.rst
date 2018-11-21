@@ -11,6 +11,7 @@ Utilisation de l'extension spihnx-easypython
    :caption: Contents:
 
    tutorial.rst
+   utilisation.rst
 
 
 Indices and tables

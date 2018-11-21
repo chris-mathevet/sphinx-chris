@@ -1,5 +1,8 @@
-Démarrage rapide (QuickStart)
-===============================
+Mise en place
+==============
+
+Démarrage rapide 
+#################
 
 Prérequis
 ++++++++++
@@ -75,6 +78,16 @@ Créez le squelette de votre documentation :
 Avant de faire vos commit, n'oubliez pas de créer le fichier .gitignore qui va bien.
 
 Poussez votre dépot git sur un dépot public.
+
+
+Ajoutez l'extension à la configuration de sphinx en ajoutant dans le fichier conf.py :
+
+.. code::
+
+        extensions = [
+                'sphinx-easypython',
+        ]
+
 
 
 Publication
