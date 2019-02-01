@@ -117,7 +117,7 @@ class EasyPythonDirective(Directive):
             #    }
         }
         if "erreurs" in donnees["metaInfos"]:
-            print("ATTENTION, des erreurs sont renvoyées par pcap-api:" + str(donnees))
+            print("ATTENTION, des erreurs sont renvoyées par pcap-api:\n" + str(donnees["erreur"]))
         if(self.options["language"] == "python"):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
