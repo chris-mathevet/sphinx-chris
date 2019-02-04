@@ -116,7 +116,7 @@ class EasyPythonDirective(Directive):
             #      'nom_solution': 'fonction_bidon',
             #    }
         }
-        if "erreurs" in donnees["metaInfos"]:
+        if donnees.get("metaInfos",None) and "erreurs" in donnees["metaInfos"]:
             print("ATTENTION, des erreurs sont renvoyées par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
         if(self.options["language"] == "python"):
             zoneExercice = EasyPythonNode()
