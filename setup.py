@@ -6,6 +6,6 @@ setup(
     author='Julien Robert',
     author_email='julien.robert@univ-orleans.fr',
     packages=find_packages(),
-    install_requires=['sphinx>=1.8'],
+    install_requires=['sphinx>=1.8', 'PyYAML>=3'],
     dependency_links=['git+https://gitlab.com/jrobert/easypython-testeur.git#egg=easypython_testeur'],
 )

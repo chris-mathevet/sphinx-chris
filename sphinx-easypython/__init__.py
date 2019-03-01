@@ -6,6 +6,7 @@ from docutils.parsers.rst import directives
 import os
 import requests
 import json
+import yaml
 
 #os.environ['NO_PROXY'] = 'localhost'
 API_URI = os.environ.get("PCAP_API_SERVER","localhost")
@@ -83,9 +84,15 @@ class EasyPythonDirective(Directive):
               'moduleEns': 'entrees_visibles = [\n        (1,2),\n        (2,3)\n]\nentrees_invisibles = [\n        (1,2),\n        (2,3)\n]\n\n@solution\ndef mafonctino(x,y):\n  return  x\n', 'auteur': '', 'date': '2016-10-21T09:28:42.557085', 'metaInfos': '{"solutions_invisibles": [[[1, 2], 1], [[2, 3], 2]], "messages": ["Solutions et entr\\u00e9es, tout y est !"], "arguments": ["x", "y"], "temps": 0.005748748779296875, "entrees_invisibles": [[1, 2], [2, 3]], "entrees_visibles": [[1, 2], [2, 3]], "nom_solution": "mafonctino", "solutions_visibles": [["1, 2", "1"], ["2, 3", "2"]]}'}
         """
 
-    has_content = True
     required_arguments = 1
     optional_arguments = 0
+
+
+    def yaml_option(texte):
+        try:
+            return yaml.load(texte)
+        except Exception as e:
+            raise ValueError("JSON parse error :" + str(e))
 
     option_spec = {
         "language": directives.unchanged,
@@ -93,6 +100,7 @@ class EasyPythonDirective(Directive):
         "titre": directives.unchanged,
         "nomclasse": directives.unchanged,
         "nom_classe_test": directives.unchanged,
+        "extra_yaml": yaml_option,
     }
 
     possibleMeta = {"nomclasse", "nom_classe_test"}
@@ -104,6 +112,8 @@ class EasyPythonDirective(Directive):
         metas = {"nom_classe_test": os.path.basename(os.path.splitext(absolute_filename)[0])}
         metas.update({x: self.options[x]
                       for x in self.possibleMeta if x in self.options})
+        if "extra_yaml" in self.options:
+            metas["extra_yaml"] = self.options["extra_yaml"]
         self.options.update({"metainfos": metas})
         print("OPTIONS:" + str(self.options) + relative_filename)
 
