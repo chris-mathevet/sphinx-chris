@@ -3,10 +3,10 @@ var codemirrors={}
 
 function marquerReussi(hash, reponse)
 {
-    let bouton = currentNode.children("button")[0];
-    bouton.innerHTML="Re-Envoyer";
     let currentCM   = codemirrors[hash];
     let currentNode = codeNode[hash];
+    let bouton = currentNode.children("button")[0];
+    bouton.innerHTML="Re-Envoyer";
     //currentCM.setOption('readOnly',true);
     //currentNode.children("button").remove();
     console.log(reponse);
