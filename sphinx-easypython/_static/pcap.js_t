@@ -9,7 +9,7 @@ function marquerReussi(hash, reponse)
     //currentNode.children("button").remove();
     let reussi;
     if("infos_reussite" in rep){
-	let reussi = $("<div class='pcap_feliciations'>");
+	reussi = $("<div class='pcap_feliciations'>");
 	for (titre in reponse["infos_reussite"]){
        		let contenu = $(`<div/>${titre}</div>`);
 		contenu.append($('<ul/>'));
@@ -21,9 +21,10 @@ function marquerReussi(hash, reponse)
 	reussi.append(contenu);
     }
     else{
-	reussi =$("<div class='pcap_feliciations'>Félicitations !!</div>");
+	reussi = $("<div class='pcap_feliciations'>Félicitations !!</div>");
+        console.log(reussi);
     }
-
+    console.log(reussi);
     if(currentNode.children(".pcap_resultats").length>0)
          currentNode.children(".pcap_resultats").replaceWith(reussi);
     else
