@@ -19,9 +19,8 @@ function marquerReussi(hash, reponse)
         	for( x of reponse["infos_reussite"][titre]){
              		contenu.append($(`<li>${x}</li>`));
             	}
-        
+		reussi.append(contenu);
     	}
-	reussi.append(contenu);
     }
     else{
 	reussi = $("<div class='pcap_feliciations'>Félicitations !!</div>");
