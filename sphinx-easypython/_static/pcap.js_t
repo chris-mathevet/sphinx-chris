@@ -1,13 +1,29 @@
 var codeNode={}
 var codemirrors={}
 
-function marquerReussi(hash)
+function marquerReussi(hash, reponse)
 {
     let currentCM   = codemirrors[hash];
     let currentNode = codeNode[hash];
     //currentCM.setOption('readOnly',true);
     //currentNode.children("button").remove();
-    let reussi=$("<div class='pcap_feliciations'>Félicitations !!</div>");
+    let reussi;
+    if("infos_reussite" in rep){
+	let reussi = $("<div class='pcap_feliciations'>");
+	for (titre in reponse["infos_reussite"]){
+       		let contenu = $(`<div/>${titre}</div>`);
+		contenu.append($('<ul/>');
+        	for( x of reponse["infos_reussite"][titre]){
+             		contenu.append($(`<li>${x}</li>`));
+            	}
+        
+    	}
+	reussi.append(contenu);
+    }
+    else{
+	reussi =$("<div class='pcap_feliciations'>Félicitations !!</div>");
+    }
+
     if(currentNode.children(".pcap_resultats").length>0)
          currentNode.children(".pcap_resultats").replaceWith(reussi);
     else
@@ -73,7 +89,7 @@ function soumettreSolution(hash,language)
         bouton.disabled=false;
         if (reponse.ok)
         {
-          marquerReussi(hash);
+          marquerReussi(hash, reponse);
         }
         else
         {
