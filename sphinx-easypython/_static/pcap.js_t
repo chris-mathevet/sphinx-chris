@@ -3,10 +3,13 @@ var codemirrors={}
 
 function marquerReussi(hash, reponse)
 {
+    let bouton = currentNode.children("button")[0];
+    bouton.innerHTML="Re-Envoyer";
     let currentCM   = codemirrors[hash];
     let currentNode = codeNode[hash];
     //currentCM.setOption('readOnly',true);
     //currentNode.children("button").remove();
+    console.log(reponse);
     let reussi;
     if("infos_reussite" in reponse){
 	reussi = $("<div class='pcap_feliciations'>");
@@ -19,13 +22,10 @@ function marquerReussi(hash, reponse)
         
     	}
 	reussi.append(contenu);
-        console.log(reussi);
     }
     else{
 	reussi = $("<div class='pcap_feliciations'>Félicitations !!</div>");
-        console.log(reussi);
     }
-    console.log("TOTO");
     console.log(reussi);
     if(currentNode.children(".pcap_resultats").length>0)
          currentNode.children(".pcap_resultats").replaceWith(reussi);
@@ -92,7 +92,7 @@ function soumettreSolution(hash,language)
         bouton.disabled=false;
         if (reponse.ok)
         {
-          marquerReussi(hash, reponse);
+          reponse.json().then(reponse => marquerReussi(hash, reponse));
         }
         else
         {
