@@ -9,12 +9,11 @@ function marquerReussi(hash, reponse)
     bouton.innerHTML="Re-Envoyer";
     //currentCM.setOption('readOnly',true);
     //currentNode.children("button").remove();
-    console.log(reponse);
     let reussi;
     if("infos_reussite" in reponse){
-	reussi = $("<div class='pcap_feliciations'>");
+	reussi = $("<div class='pcap_feliciations pcap_resultats'>");
 	for (titre in reponse["infos_reussite"]){
-       		let contenu = $(`<div/><h2>${titre}</h2></div>`);
+       		let contenu = $(`<div><h2>${titre}</h2></div>`);
 		let liste = $('<ul/>');
         	for( x of reponse["infos_reussite"][titre]){
              		liste.append($(`<li>${x}</li>`));
