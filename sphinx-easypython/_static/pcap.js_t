@@ -12,7 +12,7 @@ function marquerReussi(hash, reponse)
 	let reussi = $("<div class='pcap_feliciations'>");
 	for (titre in reponse["infos_reussite"]){
        		let contenu = $(`<div/>${titre}</div>`);
-		contenu.append($('<ul/>');
+		contenu.append($('<ul/>'));
         	for( x of reponse["infos_reussite"][titre]){
              		contenu.append($(`<li>${x}</li>`));
             	}
