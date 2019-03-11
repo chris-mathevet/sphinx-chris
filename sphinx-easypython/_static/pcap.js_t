@@ -8,7 +8,7 @@ function marquerReussi(hash, reponse)
     //currentCM.setOption('readOnly',true);
     //currentNode.children("button").remove();
     let reussi;
-    if("infos_reussite" in rep){
+    if("infos_reussite" in reponse){
 	reussi = $("<div class='pcap_feliciations'>");
 	for (titre in reponse["infos_reussite"]){
        		let contenu = $(`<div/>${titre}</div>`);
