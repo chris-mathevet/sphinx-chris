@@ -14,11 +14,12 @@ function marquerReussi(hash, reponse)
     if("infos_reussite" in reponse){
 	reussi = $("<div class='pcap_feliciations'>");
 	for (titre in reponse["infos_reussite"]){
-       		let contenu = $(`<div/>${titre}</div>`);
-		contenu.append($('<ul/>'));
+       		let contenu = $(`<div/><h2>${titre}</h2></div>`);
+		let liste = $('<ul/>');
         	for( x of reponse["infos_reussite"][titre]){
-             		contenu.append($(`<li>${x}</li>`));
+             		liste.append($(`<li>${x}</li>`));
             	}
+		contenu.append(liste);
 		reussi.append(contenu);
     	}
     }
