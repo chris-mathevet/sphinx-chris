@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from docutils import nodes
 from docutils.parsers.rst import Directive
 from sphinx.locale import _
