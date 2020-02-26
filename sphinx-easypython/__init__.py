@@ -34,7 +34,7 @@ class EasyPythonDirective(Directive):
                     for message_erreur in res["messagesErreur"]:
                         print("\t" + str(message_erreur))
                 else:
-                    print("\tLa fonction proposée s'appelle : " +
+                    print("\tLa fonction s'appelle : " +
                           res["nom_solution"])
                     if "solutions_visibles" in res:
                         print("\tENTREES VISIBLES DES ETUDIANTS:")
@@ -127,7 +127,7 @@ class EasyPythonDirective(Directive):
             #    }
         }
         if donnees.get("metaInfos",None) and "erreurs" in donnees["metaInfos"]:
-            print("ATTENTION, des erreurs sont renvoyées par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
+            print("ATTENTION, des erreurs sont renvoyees par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
         if(self.options["language"] == "python"):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
