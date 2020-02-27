@@ -60,7 +60,7 @@ class EasyPythonDirective(Directive):
             dico = res.json()
             if 'traceback' in dico:
                 print(dico["traceback"])
-                return dico
+            return dico
         except Exception as e:
                 raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ str(res.content))
 
