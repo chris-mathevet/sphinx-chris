@@ -7,6 +7,7 @@ import os
 import requests
 import json
 import yaml
+from docker_exerciseur.exerciseur import Exerciseur
 
 #os.environ['NO_PROXY'] = 'localhost'
 API_URI = os.environ.get("PCAP_API_SERVER","pcap-api:8000/pcap")
@@ -48,41 +49,20 @@ class EasyPythonDirective(Directive):
                                   "(" + str(entree) + ") renvoie " + str(sortie))
                 return res
 
-    def getExercice(self, pathFichierModuleEns, options):
-        with open(pathFichierModuleEns, encoding='utf-8') as fichier:
-            contenu = ''.join(fichier.readlines())
-            headers = {'content-type': 'application/json'}
-            payload = {'moduleEns': contenu, 'type': self.options["language"]}
-            payload.update(options)
-            res = requests.post("http://"+API_URI+"/api/v1/gestion_exercice/",
+    def getExercice(self, pathDossierModuleEns, options):
+        exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **self.options["extra_yaml"])
+        payload = {'moduleEns': , exerciseur.empaquète().vers_cbor(), 'type': self.options["language"]}
+        payload.update(options)
+        headers = {'content-type': 'application/json'}
+        res = requests.post("http://"+API_URI+"/api/exercice/",
                                 data=json.dumps(payload), headers=headers)
-            try:
-                dico = res.json()
-                if 'traceback' in dico:
-                    print(dico["traceback"])
+        try:
+            dico = res.json()
+            if 'traceback' in dico:
+                print(dico["traceback"])
                 return dico
-            except Exception as e:
-                raise Exception("Requete: " + "http://"+API_URI+"/api/v1/gestion_exercice/" + "  reponse: "+ str(res.content))
-
-
-        """
-        {'titre': 'mafonctino',
-        'enonce': 'toto',
-        'hashCode': '23f83f469056e5351613c4f6dc71c72b',
-        'metaInfos':
-           {
-              'entrees_visibles': [[1, 2], [2, 3]],
-              'arguments': ['x', 'y'],
-              'solutions_visibles': [['1, 2', '1'], ['2, 3', '2']],
-              'nom_solution': 'mafonctino',
-              'messages': ['Solutions et entrees, tout y est !'],
-              'temps': 0.005748748779296875,
-              'solutions_invisibles': [[[1, 2], 1], [[2, 3], 2]],
-              'entrees_invisibles': [[1, 2], [2, 3]]},
-              'resource_uri': '/api/v1/gestion_exercice/23f83f469056e5351613c4f6dc71c72b/',
-              'commentaires': '',
-              'moduleEns': 'entrees_visibles = [\n        (1,2),\n        (2,3)\n]\nentrees_invisibles = [\n        (1,2),\n        (2,3)\n]\n\n@solution\ndef mafonctino(x,y):\n  return  x\n', 'auteur': '', 'date': '2016-10-21T09:28:42.557085', 'metaInfos': '{"solutions_invisibles": [[[1, 2], 1], [[2, 3], 2]], "messages": ["Solutions et entr\\u00e9es, tout y est !"], "arguments": ["x", "y"], "temps": 0.005748748779296875, "entrees_invisibles": [[1, 2], [2, 3]], "entrees_visibles": [[1, 2], [2, 3]], "nom_solution": "mafonctino", "solutions_visibles": [["1, 2", "1"], ["2, 3", "2"]]}'}
-        """
+        except Exception as e:
+                raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ str(res.content))
 
     required_arguments = 1
     optional_arguments = 0
