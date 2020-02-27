@@ -9,7 +9,7 @@ import json
 import yaml
 
 #os.environ['NO_PROXY'] = 'localhost'
-API_URI = os.environ.get("PCAP_API_SERVER","localhost")
+API_URI = os.environ.get("PCAP_API_SERVER","pcap-api:8000/pcap")
 
 class EasyPythonNode(nodes.Element):
     pass
@@ -192,8 +192,9 @@ def setup(app):
     app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/clike/clike.min.js")
     app.connect('config-inited', add_static)
     
-    app.add_config_value('easypython_production', "EasyPythonProduction" in os.environ, 'html')
-    api_route = os.environ.get("PCAP_API_URI",'https://www.univ-orleans.fr/iut-orleans/informatique/intra/ap/api/v1/')
+    app.add_config_value('easypython_production', "READTHEDOCS" in os.environ, 'html')
+    #api_route = os.environ.get("PCAP_API_URI",'https://www.univ-orleans.fr/iut-orleans/informatique/intra/ap/api/v1/')
+    api_route = os.environ.get("PCAP_API_URI",'pcap/api/v1/')
     app.add_config_value('easypython_api_route', api_route , 'html')
     app.add_node(EasyPythonNode, html=(visit_easypython_node,
                                        depart_easypython_node), latex=(visit_latex, latex_departure))
