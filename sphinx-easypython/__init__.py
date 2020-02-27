@@ -53,7 +53,7 @@ class EasyPythonDirective(Directive):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **self.options["extra_yaml"])
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
         data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"]}
-        payload.update(options)
+        data.update(options)
         #headers = {'content-type': 'application/json'}
         res = requests.post("http://"+API_URI+"/api/exercice/",
                                 data=data, files=files)
