@@ -194,7 +194,7 @@ def setup(app):
     
     app.add_config_value('easypython_production', "READTHEDOCS" in os.environ, 'html')
     #api_route = os.environ.get("PCAP_API_URI",'https://www.univ-orleans.fr/iut-orleans/informatique/intra/ap/api/v1/')
-    api_route = os.environ.get("PCAP_API_URI",'/pcap/api/v1/')
+    api_route = os.environ.get("PCAP_API_URI",'/pcap/api/v1')
     app.add_config_value('easypython_api_route', api_route , 'html')
     app.add_node(EasyPythonNode, html=(visit_easypython_node,
                                        depart_easypython_node), latex=(visit_latex, latex_departure))
