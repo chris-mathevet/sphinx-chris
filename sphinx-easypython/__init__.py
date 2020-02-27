@@ -51,13 +51,16 @@ class EasyPythonDirective(Directive):
 
     def getExercice(self, pathDossierModuleEns, options):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **self.options["extra_yaml"])
-        payload = {'moduleEns': exerciseur.empaquète().vers_cbor(), 'type': self.options["language"]}
+        files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
+        data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"]}
         payload.update(options)
-        headers = {'content-type': 'application/json'}
+        #headers = {'content-type': 'application/json'}
         res = requests.post("http://"+API_URI+"/api/exercice/",
-                                data=payload, headers=headers)
+                                data=data, files=files, headers=headers)
         try:
             dico = res.json()
+            print("DEBUG:", res.raw.read())
+            print("DEBUG:", dico)
             if 'traceback' in dico:
                 print(dico["traceback"])
             return dico
