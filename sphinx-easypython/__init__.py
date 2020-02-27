@@ -56,7 +56,7 @@ class EasyPythonDirective(Directive):
         payload.update(options)
         #headers = {'content-type': 'application/json'}
         res = requests.post("http://"+API_URI+"/api/exercice/",
-                                data=data, files=files, headers=headers)
+                                data=data, files=files)
         try:
             dico = res.json()
             print("DEBUG:", res.raw.read())
