@@ -55,7 +55,7 @@ class EasyPythonDirective(Directive):
         payload.update(options)
         headers = {'content-type': 'application/json'}
         res = requests.post("http://"+API_URI+"/api/exercice/",
-                                data=json.dumps(payload), headers=headers)
+                                data=payload, headers=headers)
         try:
             dico = res.json()
             if 'traceback' in dico:
