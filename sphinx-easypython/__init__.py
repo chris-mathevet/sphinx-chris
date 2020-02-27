@@ -10,7 +10,7 @@ import yaml
 from docker_exerciseur.exerciseur import Exerciseur
 
 #os.environ['NO_PROXY'] = 'localhost'
-API_URI = os.environ.get("PCAP_API_SERVER","pcap-api:8000/pcap")
+API_URI = os.environ.get("PCAP_API_SERVER","pcap-api-rest:8000/pcap")
 
 class EasyPythonNode(nodes.Element):
     pass
