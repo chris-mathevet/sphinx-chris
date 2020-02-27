@@ -49,7 +49,7 @@ class EasyPythonDirective(Directive):
                 return res
 
     def getExercice(self, pathFichierModuleEns, options):
-        with open(pathFichierModuleEns) as fichier:
+        with open(pathFichierModuleEns, encoding='utf-8') as fichier:
             contenu = ''.join(fichier.readlines())
             headers = {'content-type': 'application/json'}
             payload = {'moduleEns': contenu, 'type': self.options["language"]}
