@@ -7,5 +7,5 @@ setup(
     author_email='julien.robert@univ-orleans.fr',
     packages=find_packages(),
     install_requires=['sphinx>=1.8', 'PyYAML>=3'],
-    dependency_links=['git+https://gitlab.com/jrobert/easypython-testeur.git#egg=easypython_testeur', 'git+https://gitlab.com/FlorentBecker2/docker-exerciseur.git#egg=docker_exerciseur'],
+    dependency_links=['https://gitlab.com/jrobert/easypython-testeur.git#egg=easypython_testeur', 'https://gitlab.com/FlorentBecker2/docker-exerciseur.git#egg=docker_exerciseur'],
 )
