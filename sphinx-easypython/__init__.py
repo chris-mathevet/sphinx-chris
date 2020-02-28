@@ -8,6 +8,7 @@ import requests
 import json
 import yaml
 from docker_exerciseur.exerciseur import Exerciseur
+from sphinx.util import logging
 
 #os.environ['NO_PROXY'] = 'localhost'
 API_URI = os.environ.get("PCAP_API_SERVER","pcap-api-rest:8000/pcap")
@@ -22,47 +23,44 @@ class Exemples(nodes.Admonition, nodes.Element):
 
 class EasyPythonDirective(Directive):
 
-    def test_exercice(self, pathFichierModuleEns, options):
-        from easypython_testeur.TesteurPython import TesteurPython
-        if options["language"] == "python":
-            print("Traitement du fichier" + str(pathFichierModuleEns))
-            with open(pathFichierModuleEns, "rb") as fichier_module_ens:
-                testeur = TesteurPython(fichier_module_ens.read(), "", False)
-                # print(testeur.test())
-                res = testeur.infos()
-                if "messagesErreur" in res:
-                    print("Fichier incorrect:")
-                    for message_erreur in res["messagesErreur"]:
-                        print("\t" + str(message_erreur))
-                else:
-                    print("\tLa fonction s'appelle : " +
-                          res["nom_solution"])
-                    if "solutions_visibles" in res:
-                        print("\tENTREES VISIBLES DES ETUDIANTS:")
-                        for (entree, sortie) in res["solutions_visibles"]:
-                            print("\t\t" + res["nom_solution"] +
-                                  "(" + str(entree) + ") renvoie " + str(sortie))
-                    if "solutions_invisibles" in res:
-                        print("\tENTREES INVISIBLES DES ETUDIANTS:")
-                        for (entree, sortie) in res["solutions_invisibles"]:
-                            print("\t\t" + res["nom_solution"] +
-                                  "(" + str(entree) + ") renvoie " + str(sortie))
-                return res
+    # def test_exercice(self, pathFichierModuleEns, options):
+    #     from easypython_testeur.TesteurPython import TesteurPython
+    #     if options["language"] == "python":
+    #         print("Traitement du fichier" + str(pathFichierModuleEns))
+    #         with open(pathFichierModuleEns, "rb") as fichier_module_ens:
+    #             testeur = TesteurPython(fichier_module_ens.read(), "", False)
+    #             # print(testeur.test())
+    #             res = testeur.infos()
+    #             if "messagesErreur" in res:
+    #                 print("Fichier incorrect:")
+    #                 for message_erreur in res["messagesErreur"]:
+    #                     print("\t" + str(message_erreur))
+    #             else:
+    #                 print("\tLa fonction s'appelle : " +
+    #                       res["nom_solution"])
+    #                 if "solutions_visibles" in res:
+    #                     print("\tENTREES VISIBLES DES ETUDIANTS:")
+    #                     for (entree, sortie) in res["solutions_visibles"]:
+    #                         print("\t\t" + res["nom_solution"] +
+    #                               "(" + str(entree) + ") renvoie " + str(sortie))
+    #                 if "solutions_invisibles" in res:
+    #                     print("\tENTREES INVISIBLES DES ETUDIANTS:")
+    #                     for (entree, sortie) in res["solutions_invisibles"]:
+    #                         print("\t\t" + res["nom_solution"] +
+    #                               "(" + str(entree) + ") renvoie " + str(sortie))
+    #             return res
 
     def getExercice(self, pathDossierModuleEns, options):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **self.options["extra_yaml"])
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
         data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"]}
         data.update(options)
-        #headers = {'content-type': 'application/json'}
         res = requests.post("http://"+API_URI+"/api/exercice/",
                                 data=data, files=files)
         try:
             dico = res.json()
-            print("DEBUG:", res.raw.read())
-            print("DEBUG:", dico)
             if 'traceback' in dico:
-                print(dico["traceback"])
+                logging.error((dico["traceback"]))
             return dico
         except Exception as e:
                 raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ str(res.content))
@@ -98,19 +96,14 @@ class EasyPythonDirective(Directive):
         if "extra_yaml" in self.options:
             metas["extra_yaml"] = self.options["extra_yaml"]
         self.options.update({"metainfos": metas})
-        print("OPTIONS:" + str(self.options) + relative_filename)
+        logging.info("OPTIONS:" + str(self.options) + relative_filename)
 
         donnees = self.getExercice(absolute_filename, self.options) if env.app.config.easypython_production else {
             'hashCode': '1234',
-            'metaInfos': self.test_exercice(absolute_filename, self.options),
-            #{
-            #      'arguments': ['argument_bidon', 'argument_bidon'],
-            #      'solutions_visibles': [["exemple bidon", "sortie bidon"], ["exemple bidon", "sortie bidon"]],
-            #      'nom_solution': 'fonction_bidon',
-            #    }
+            'metaInfos': {},
         }
         if donnees.get("metaInfos",None) and "erreurs" in donnees["metaInfos"]:
-            print("ATTENTION, des erreurs sont renvoyees par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
+            logging.warning("ATTENTION, des erreurs sont renvoyees par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
         if(self.options["language"] == "python"):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
@@ -174,7 +167,7 @@ def setup(app):
     app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/python/python.min.js")
     app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/clike/clike.min.js")
     app.connect('config-inited', add_static)
-    
+
     app.add_config_value('easypython_production', "READTHEDOCS" in os.environ, 'html')
     #api_route = os.environ.get("PCAP_API_URI",'https://www.univ-orleans.fr/iut-orleans/informatique/intra/ap/api/v1/')
     api_route = os.environ.get("PCAP_API_URI",'/pcap/api/v1')
