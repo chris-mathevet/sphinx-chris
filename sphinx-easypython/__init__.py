@@ -12,6 +12,7 @@ from sphinx.util import logging
 
 #os.environ['NO_PROXY'] = 'localhost'
 API_URI = os.environ.get("PCAP_API_SERVER","pcap-api-rest:8000/pcap")
+logger = logging.getLogger(__name__)
 
 class EasyPythonNode(nodes.Element):
     pass
@@ -60,7 +61,7 @@ class EasyPythonDirective(Directive):
         try:
             dico = res.json()
             if 'traceback' in dico:
-                logging.error((dico["traceback"]))
+                logger.error((dico["traceback"]))
             return dico
         except Exception as e:
                 raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ str(res.content))
@@ -96,14 +97,14 @@ class EasyPythonDirective(Directive):
         if "extra_yaml" in self.options:
             metas["extra_yaml"] = self.options["extra_yaml"]
         self.options.update({"metainfos": metas})
-        logging.info("OPTIONS:" + str(self.options) + relative_filename)
+        logger.info("OPTIONS:" + str(self.options) + relative_filename)
 
         donnees = self.getExercice(absolute_filename, self.options) if env.app.config.easypython_production else {
             'hashCode': '1234',
             'metaInfos': {},
         }
         if donnees.get("metaInfos",None) and "erreurs" in donnees["metaInfos"]:
-            logging.warning("ATTENTION, des erreurs sont renvoyees par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
+            logger.warning("ATTENTION, des erreurs sont renvoyees par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
         if(self.options["language"] == "python"):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
