@@ -73,7 +73,7 @@ function soumettreSolution(hash,language)
     let bouton = currentNode.children("button")[0]
     bouton.disabled=true;
     tutu = bouton.innerHTML='Patientez..';
-    fetch('{{easypython_api_route}}/tentative/',
+    fetch('{{easypython_api_route}}tentative/',
     {
       mode        : 'cors',
       method      : 'POST',
