@@ -138,7 +138,7 @@ function setInfosExercices()
         exercices+=elem+",";
    }
 
-   fetch("{{easypython_api_route}}/exercice/?exercices="+exercices+"&reussi=true&format=json",
+   fetch("{{easypython_api_route}}exercice/?exercices="+exercices+"&reussi=true&format=json",
     {
       mode        :'cors',
       method      : 'GET',
