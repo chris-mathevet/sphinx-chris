@@ -81,7 +81,7 @@ function soumettreSolution(hash,language)
       body        : JSON.stringify(
         {
           'contenu':currentCM.getValue(),
-          'hash'   : hash
+          'titre'   : hash
         }),
       headers     : {
           'content-type':'application/json'
@@ -135,10 +135,10 @@ function setInfosExercices()
   let exercices ="";
   for(let elem in codeNode)
    {
-        exercices+=elem+";";
+        exercices+=elem+",";
    }
 
-   fetch("{{easypython_api_route}}/exerciceReussi/set/"+exercices+"/?format=json",
+   fetch("{{easypython_api_route}}/exercice/?exercices="+exercices+"&reussi=true&format=json",
     {
       mode        :'cors',
       method      : 'GET',
