@@ -1,6 +1,22 @@
 var codeNode={}
 var codemirrors={}
 
+function getCookie(name) {
+  if (!document.cookie) {
+    return null;
+  }
+
+  const xsrfCookies = document.cookie.split(';')
+    .map(c => c.trim())
+    .filter(c => c.startsWith(name + '='));
+
+  if (xsrfCookies.length === 0) {
+    return null;
+  }
+  return decodeURIComponent(xsrfCookies[0].split('=')[1]);
+}
+
+
 function marquerReussi(hash, reponse)
 {
     let currentCM   = codemirrors[hash];
@@ -73,7 +89,10 @@ function soumettreSolution(hash,language)
     let bouton = currentNode.children("button")[0]
     bouton.disabled=true;
     tutu = bouton.innerHTML='Patientez..';
-    fetch('{{easypython_api_route}}tentative/',
+    const csrfToken = getCookie('csrftoken');
+
+
+    fetch('{{easypython_api_route}}tentative/?format=json',
     {
       mode        : 'cors',
       method      : 'POST',
@@ -84,7 +103,8 @@ function soumettreSolution(hash,language)
           'titre'   : hash
         }),
       headers     : {
-          'content-type':'application/json'
+          'content-type':'application/json',
+          'X-CSRFTOKEN': csrfToken
         }
      })
      .then(reponse => {
