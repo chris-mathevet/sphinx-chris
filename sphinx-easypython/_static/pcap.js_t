@@ -84,8 +84,8 @@ async function soumettreSolution(hash,language)
 
 function remplirNoeudCode(noeud)
 {
-    let prototype=$(this).html();
-    $(this).text("");
+    let prototype = this.innerHTML;
+    this.innerText = "";
     let mode = {"python":"python","java":"text/x-java"}[$(this).attr('language')];
     c=CodeMirror(this, {
           value: prototype,
@@ -97,7 +97,7 @@ function remplirNoeudCode(noeud)
 
      let bouton=$("<button/>", {
           text:'Envoyer',
-          click: function(hash, language){return function(){soumettre(hash,language)}}($(this).attr('hash'), $(this).attr('language')),
+          click: function(){soumettre(this.getAttribute("hash"),this.getAttribute("language"))}.bind(this),
           class:'pcap_envoyer',
           type:'button'
      })
@@ -129,7 +129,7 @@ async function setInfosExercices()
         }
      });
     let reponse = await httpResponse.json();
-    for(let elem of reponse.objects)
+    for(let elem of reponse)
        codeNode[elem["hashCode"]].append($("<div class='alert alert-success' role='alert'>Déja Réussi !!</div>"));
 }
 
