@@ -29,7 +29,7 @@ function marquerReussi(hash, tentative)
          currentNode.append(reussi);
 }
 
-function marquerARetenter(hash, reponse, language)
+function marquerARetenter(hash, tentative, language)
 {
     let currentCM   = codemirrors[hash];
     let currentNode = codeNode[hash];
