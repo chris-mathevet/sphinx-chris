@@ -11,7 +11,7 @@ from docker_exerciseur.exerciseur import Exerciseur
 from sphinx.util import logging
 
 #os.environ['NO_PROXY'] = 'localhost'
-API_URI = os.environ.get("PCAP_API_SERVER","pcap-api-rest:8000/pcap")
+API_URI = os.environ.get("PCAP_API_SERVER","pcap-api:8000/pcap")
 logger = logging.getLogger(__name__)
 
 class EasyPythonNode(nodes.Element):
