@@ -108,7 +108,7 @@ class EasyPythonDirective(Directive):
         if(self.options["language"] == "python"):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
-            exemples["exemples"] = donnees["metaInfos"]["solutions_visibles"]
+            exemples["exemples"] = donnees["metaInfos"]["sorties_visibles"]
             zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
                 "(" + ','.join(donnees["metaInfos"]
                                ["arguments"]) + "):\n    return None"
