@@ -98,6 +98,7 @@ class EasyPythonDirective(Directive):
         if "extra_yaml" in self.options:
             metas["extra_yaml"] = self.options["extra_yaml"]
         self.options.update({"metainfos": metas})
+        logger.info("tags:" + str(self.options["tags"]))
         logger.info("OPTIONS:" + str(self.options) + relative_filename)
 
         donnees = self.getExercice(absolute_filename, self.options) if env.app.config.easypython_production else {
