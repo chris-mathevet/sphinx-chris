@@ -54,7 +54,7 @@ class EasyPythonDirective(Directive):
     def getExercice(self, pathDossierModuleEns, options):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
-        data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"]}
+        data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"], 'tags': self.options["tags"]}
         data.update(options)
         res = requests.post("http://"+API_URI+"/api/exercice/",
                                 data=data, files=files)
@@ -83,6 +83,7 @@ class EasyPythonDirective(Directive):
         "nomclasse": directives.unchanged,
         "nom_classe_test": directives.unchanged,
         "extra_yaml": yaml_option,
+        "tags": yaml_option,
     }
 
     possibleMeta = {"nomclasse", "nom_classe_test"}
