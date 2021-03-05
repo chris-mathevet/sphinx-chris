@@ -54,7 +54,7 @@ class EasyPythonDirective(Directive):
     def getExercice(self, pathDossierModuleEns, options):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
-        data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"], 'tags': str(self.options["tags"])}
+        data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"], 'tags': self.options["tags"]}
         data.update(options)
         res = requests.post("http://"+API_URI+"/api/exercice/",
                                 data=data, files=files)
@@ -64,7 +64,7 @@ class EasyPythonDirective(Directive):
                 logger.error((dico["traceback"]))
             return dico
         except Exception as e:
-                raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ str(res.content))
+                raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ res.content)
 
     required_arguments = 1
     optional_arguments = 0
@@ -98,7 +98,7 @@ class EasyPythonDirective(Directive):
         if "extra_yaml" in self.options:
             metas["extra_yaml"] = self.options["extra_yaml"]
         self.options.update({"metainfos": metas})
-        logger.info("tags:" + str(self.options["tags"]))
+        logger.info("tags:" + str(self.options.get("tags",[])))
         logger.info("OPTIONS:" + str(self.options) + relative_filename)
 
         donnees = self.getExercice(absolute_filename, self.options) if env.app.config.easypython_production else {
