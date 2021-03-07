@@ -1,3 +1,154 @@
+class CodeMirrorConvergenceAdapter {
+	constructor(editor, realtimeString) {
+		this._editor = editor;
+		this._model = realtimeString;
+		this._colorAssigner = new ConvergenceColorAssigner.ColorAssigner();
+	}
+
+	bind() {
+		this._initSharedData();
+		this._initSharedCursors();
+		this._initSharedSelection();
+	}
+
+	_initSharedData() {
+		this._editor.setValue(this._model.value());
+
+		this._contentManager = new CodeMirrorCollabExt.EditorContentManager({
+editor: this._editor,
+onInsert: (index, text) => {
+this._model.insert(index, text);
+},
+onReplace: (index, length, text) => {
+this._model.model().startBatch();
+this._model.remove(index, length);
+this._model.insert(index, text);
+this._model.model().completeBatch();
+},
+onDelete: (index, length) => {
+this._model.remove(index, length);
+},
+remoteOrigin: "convergence"
+});
+
+this._model.events().subscribe(e => {
+		switch (e.name) {
+		case "insert":
+		this._contentManager.insert(e.index, e.value);
+		break;
+		case "remove":
+		this._contentManager.delete(e.index, e.value.length);
+		break;
+		default:
+		}
+		});
+}
+
+_initSharedCursors() {
+	this._remoteCursorManager = new CodeMirrorCollabExt.RemoteCursorManager({
+editor: this._editor,
+tooltips: true,
+tooltipDuration: 2
+});
+this._cursorReference = this._model.indexReference("cursor");
+
+const references = this._model.references({key: "cursor"});
+references.forEach((reference) => {
+		if (!reference.isLocal()) {
+		this._addRemoteCursor(reference);
+		}
+		});
+
+this._setLocalCursor();
+this._cursorReference.share();
+
+this._editor.on("cursorActivity", (e) => {
+		this._setLocalCursor();
+		});
+
+this._model.on("reference", (e) => {
+		if (e.reference.key() === "cursor") {
+		this._addRemoteCursor(e.reference);
+		}
+		});
+}
+
+_setLocalCursor() {
+	const position = this._editor.getCursor();
+	const index = this._editor.indexFromPos(position);
+	this._cursorReference.set(index);
+}
+
+_addRemoteCursor(reference) {
+	const color = this._colorAssigner.getColorAsHex(reference.sessionId());
+	const remoteCursor = this._remoteCursorManager.addCursor(reference.sessionId(), color, reference.user().displayName);
+
+	reference.on("cleared", () => remoteCursor.hide());
+	reference.on("disposed", () => remoteCursor.dispose());
+	reference.on("set", () => {
+			const cursorIndex = reference.value();
+			remoteCursor.setIndex(cursorIndex);
+			});
+}
+
+
+_initSharedSelection() {
+	this._remoteSelectionManager = new CodeMirrorCollabExt.RemoteSelectionManager({editor: this._editor});
+
+	this._selectionReference = this._model.rangeReference("selection");
+	this._setLocalSelection();
+	this._selectionReference.share();
+
+	this._editor.on("cursorActivity", (e) => {
+			this._setLocalSelection();
+			});
+
+	const references = this._model.references({key: "selection"});
+	references.forEach((reference) => {
+			if (!reference.isLocal()) {
+			this._addRemoteSelection(reference);
+			}
+			});
+
+	this._model.on("reference", (e) => {
+			if (e.reference.key() === "selection") {
+			this._addRemoteSelection(e.reference);
+			}
+			});
+}
+
+_setLocalSelection() {
+	const fromPosition = this._editor.getCursor("from");
+	const fromIndex = this._editor.indexFromPos(fromPosition);
+	const toPosition = this._editor.getCursor("to");
+	const toIndex = this._editor.indexFromPos(toPosition);
+
+	if (fromIndex !== toIndex) {
+		this._selectionReference.set({start: fromIndex, end: toIndex});
+	} else if (this._selectionReference.isSet()) {
+		this._selectionReference.clear();
+	}
+}
+
+_addRemoteSelection(reference) {
+	const color = this._colorAssigner.getColorAsHex(reference.sessionId())
+		const remoteSelection = this._remoteSelectionManager.addSelection(reference.sessionId(), color);
+
+	if (reference.isSet()) {
+		const selection = reference.value();
+		remoteSelection.setIndices(selection.start, selection.end);
+	}
+
+	reference.on("cleared", () => remoteSelection.hide());
+	reference.on("disposed", () => remoteSelection.dispose());
+	reference.on("set", () => {
+			const selection = reference.value();
+			remoteSelection.setIndices(selection.start, selection.end);
+			});
+}
+}
+
+
 var codeNode={}
 var codemirrors={}
 
@@ -15,6 +166,30 @@ function getCookie(name) {
   return decodeURIComponent(xsrfCookies[0].split('=')[1]);
 }
 
+
+async function getUser(){
+  try{
+  const reponse = await fetch('/pcap/user',
+  {
+    mode        : 'cors',
+    method      : 'GET',
+    credentials : 'include',
+    headers     : {
+        'content-type':'application/json'
+      }
+   });
+   if (!response.ok) 
+        throw new Error("Not 2xx http response")
+   const data = reponse.json();
+   return data;
+ }
+ catch(err){
+   console.log("erreur de récupération de l'utilisateur" + err);
+   return {"username":"jdoe","id":1234}
+ }
+}
+
+let user;
 
 function marquerReussi(hash, tentative)
 {
@@ -43,17 +218,18 @@ function marquerARetenter(hash, tentative, language)
 
 }
 
-async function soumettreSolution(hash,language)
-{
+const DOMAIN_URL = window.location.origin + "/convergence/api/realtime/convergence/default";
 
-    let currentCM   = codemirrors[hash];
-    let currentNode = codeNode[hash];
-    let bouton = currentNode.children("button")[0]
-    bouton.disabled=true;
+async function soumettreSolution(hash)
+{
+    const currentCM   = codemirrors[hash];
+    const currentNode = codeNode[hash];
+    const bouton      = currentNode.children("button")[0]
+    bouton.disabled =true;
     bouton.innerHTML='Patientez..';
     const csrfToken = getCookie('csrftoken');
 
-    let reponse = await fetch('{{easypython_api_route}}tentative/?format=json',
+    const reponse = await fetch('{{easypython_api_route}}tentative/?format=json',
     {
       mode        : 'cors',
       method      : 'POST',
@@ -68,47 +244,16 @@ async function soumettreSolution(hash,language)
           'X-CSRFTOKEN': csrfToken
         }
      });
-
-     bouton.disabled=false;
-     let feedback = await reponse.json();
-     if (reponse.ok && feedback.reussi )
+     bouton.disabled = false;
+     const feedback = await reponse.json();
+     if( reponse.ok && feedback.reussi )
       {
           marquerReussi(hash, feedback);
       }
       else
       {
-        marquerARetenter(hash,feedback,language);
+        marquerARetenter(hash,feedback);
       }
-}
-
-
-function remplirNoeudCode(noeud)
-{
-    let prototype = this.innerHTML;
-    this.innerText = "";
-    let mode = {"python":"python","java":"text/x-java"}[$(this).attr('language')];
-    c=CodeMirror(this, {
-          value: prototype,
-          mode:mode,
-          lineNumbers: true,
-          styleActiveLine: true,
-          matchBrackets: true
-        });
-
-     let bouton=$("<button/>", {
-          text:'Envoyer',
-          click: function(){soumettre(this.getAttribute("hash"),this.getAttribute("language"))}.bind(this),
-          class:'pcap_envoyer',
-          type:'button'
-     })
-     codeNode[$(this).attr('hash')]=$(this);
-     codemirrors[$(this).attr('hash')]=c;
-     $(this).append(bouton);
-}
-
-function reponseToJson(reponse)
-{
-    return reponse.json();
 }
 
 async function setInfosExercices()
@@ -118,7 +263,7 @@ async function setInfosExercices()
    {
         exercices+=elem+",";
    }
-
+   try{
    let httpResponse = await fetch("{{easypython_api_route}}exercice/?exercices="+exercices+"&reussi=true&format=json",
     {
       mode        :'cors',
@@ -131,15 +276,58 @@ async function setInfosExercices()
     let reponse = await httpResponse.json();
     for(let elem of reponse)
        codeNode[elem["hashCode"]].append($("<div class='alert alert-success' role='alert'>Déja Réussi !!</div>"));
+    }
+    catch(err){
+      console.log("Erreur lors de la récupération d'infos sur les exercices " + err);
+    }
+}
+async function remplirNoeudConvergence(indice){
+  const noeud = $(this);
+  const domain = await Convergence.connectAnonymously(DOMAIN_URL, user.username);
+  const mode = {"python":"python","java":"text/x-java"}[noeud.attr('language')];
+  const contenu_default = noeud.text();
+  noeud.text('');
+  const zoneCode = CodeMirror($(this)[0], {
+    value: contenu_default,
+    mode:mode,
+    lineNumbers: true,
+    styleActiveLine: true,
+    matchBrackets: true
+  });
+
+  try{
+    const model = await domain.models().openAutoCreate({
+      collection: "example-codemirror",
+      id: noeud.attr("hash")+"-"+user.id,
+      data: {text: contenu_default},
+      ephemeral: true
+    });
+    const adapter = new CodeMirrorConvergenceAdapter(zoneCode, model.elementAt("text"));
+    adapter.bind();
+  }
+  catch(e){
+    console.log("erreur de chargement de convergence", e);
+  }
+  const bouton=$("<button/>", {
+    text:'Envoyer',
+    click: function(){soumettre(noeud.attr("hash"))}.bind(noeud),
+    class:'pcap_envoyer',
+    type:'button'
+  });
+  codeNode[$(noeud).attr('hash')]=$(noeud);
+  codemirrors[$(noeud).attr('hash')]=zoneCode;
+  $(noeud).append(bouton);
+
 }
 
 document.addEventListener("DOMContentLoaded", async function(){
   window.soumettre = soumettreSolution;
   let zonesCode = $(".easypython");
-  zonesCode.each(remplirNoeudCode);
+  user = await getUser();
+  zonesCode.each(remplirNoeudConvergence);
   await setInfosExercices();
   });
-
+  
 /*
 // TODO : pour enregistrer le début de résolution d'exo
 const observer = new IntersectionObserver(function(entries) {
