@@ -163,12 +163,18 @@ def add_static(app,env,*reste):
     app.config.html_context["easypython_api_route"]=app.config.easypython_api_route
 
 def setup(app):
-    app.add_css_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/codemirror.min.css")
+    app.add_css_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.4/codemirror.min.css")
     app.add_css_file("pcap_base.css")
     app.add_js_file("pcap.js")
-    app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/codemirror.min.js")
-    app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/python/python.min.js")
-    app.add_js_file("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.27.4/mode/clike/clike.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/codemirror@5.59.4/lib/codemirror.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/codemirror@5.59.4/mode/python/python.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/codemirror@5.59.4/mode/clike/clike.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/rxjs@6.5.4/bundles/rxjs.umd.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/@convergence/convergence@1.0.0-rc.5/convergence.global.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/@convergence/input-element-bindings@0.3.4/browser/convergence-input-element-bindings.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/@convergence/color-assigner@0.3.0/umd/color-assigner.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/@convergencelabs/codemirror-collab-ext@0.1.2/umd/codemirror-collab-ext.min.js")
+    app.add_js_file("https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js")
     app.connect('config-inited', add_static)
 
     app.add_config_value('easypython_production', "READTHEDOCS" in os.environ, 'html')
