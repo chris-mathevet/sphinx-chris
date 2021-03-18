@@ -178,7 +178,7 @@ async function getUser(){
         'content-type':'application/json'
       }
    });
-   if (!reponse.ok) 
+   if (!reponse.ok)
         throw new Error("Not 2xx http response")
    const data = reponse.json();
    return data;
@@ -294,6 +294,16 @@ async function remplirNoeudConvergence(indice){
     matchBrackets: true
   });
 
+	const bouton=$("<button/>", {
+    text:'Envoyer',
+    click: function(){soumettre(noeud.attr("hash"))}.bind(noeud),
+    class:'pcap_envoyer',
+    type:'button'
+  });
+  codeNode[$(noeud).attr('hash')]=$(noeud);
+  codemirrors[$(noeud).attr('hash')]=zoneCode;
+  $(noeud).append(bouton);
+	
   try{
     const domain = await Convergence.connectAnonymously(DOMAIN_URL, user.username);
     const model = await domain.models().openAutoCreate({
@@ -308,15 +318,7 @@ async function remplirNoeudConvergence(indice){
   catch(e){
     console.log("erreur de chargement de convergence", e);
   }
-  const bouton=$("<button/>", {
-    text:'Envoyer',
-    click: function(){soumettre(noeud.attr("hash"))}.bind(noeud),
-    class:'pcap_envoyer',
-    type:'button'
-  });
-  codeNode[$(noeud).attr('hash')]=$(noeud);
-  codemirrors[$(noeud).attr('hash')]=zoneCode;
-  $(noeud).append(bouton);
+
 
 }
 
@@ -327,7 +329,7 @@ document.addEventListener("DOMContentLoaded", async function(){
   zonesCode.each(remplirNoeudConvergence);
   await setInfosExercices();
   });
-  
+
 /*
 // TODO : pour enregistrer le début de résolution d'exo
 const observer = new IntersectionObserver(function(entries) {
