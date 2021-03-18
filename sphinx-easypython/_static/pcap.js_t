@@ -283,7 +283,6 @@ async function setInfosExercices()
 }
 async function remplirNoeudConvergence(indice){
   const noeud = $(this);
-  const domain = await Convergence.connectAnonymously(DOMAIN_URL, user.username);
   const mode = {"python":"python","java":"text/x-java"}[noeud.attr('language')];
   const contenu_default = noeud.text();
   noeud.text('');
@@ -296,6 +295,7 @@ async function remplirNoeudConvergence(indice){
   });
 
   try{
+    const domain = await Convergence.connectAnonymously(DOMAIN_URL, user.username);
     const model = await domain.models().openAutoCreate({
       collection: "example-codemirror",
       id: noeud.attr("hash")+"-"+user.id,
