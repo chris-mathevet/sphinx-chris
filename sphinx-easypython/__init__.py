@@ -64,7 +64,7 @@ class EasyPythonDirective(Directive):
                 logger.error((dico["traceback"]))
             return dico
         except Exception as e:
-                raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ res.content)
+                raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ res.content.decode("utf-8"))
 
     required_arguments = 1
     optional_arguments = 0
