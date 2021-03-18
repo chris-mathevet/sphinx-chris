@@ -178,7 +178,7 @@ async function getUser(){
         'content-type':'application/json'
       }
    });
-   if (!response.ok) 
+   if (!reponse.ok) 
         throw new Error("Not 2xx http response")
    const data = reponse.json();
    return data;
