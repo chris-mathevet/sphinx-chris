@@ -138,10 +138,11 @@ def visit_exemples_node(self, node):
             entree) + "</code> votre solution doit renvoyer <code>" + str(sortie) + "</code>.</li>")
     self.body.append("</ul>")
 
+highlighting={"Jacadi":"python", "PackagePython": "python"}
 
 def visit_easypython_node(self, node):
     self.body.append("<div hash='" + node["hash"] + "' language='" +
-                     node["language"] + "' class='easypython clearfix'>")
+                     highlighting.get(node["language"], node["language"]) + "' class='easypython clearfix'>")
     self.body.append(node["prototype_solution"])
     self.body.append("</div>")
 
