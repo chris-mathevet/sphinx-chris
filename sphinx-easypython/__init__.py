@@ -24,36 +24,8 @@ class Exemples(nodes.Admonition, nodes.Element):
 
 class EasyPythonDirective(Directive):
 
-    # def test_exercice(self, pathFichierModuleEns, options):
-    #     from easypython_testeur.TesteurPython import TesteurPython
-    #     if options["language"] == "python":
-    #         print("Traitement du fichier" + str(pathFichierModuleEns))
-    #         with open(pathFichierModuleEns, "rb") as fichier_module_ens:
-    #             testeur = TesteurPython(fichier_module_ens.read(), "", False)
-    #             # print(testeur.test())
-    #             res = testeur.infos()
-    #             if "messagesErreur" in res:
-    #                 print("Fichier incorrect:")
-    #                 for message_erreur in res["messagesErreur"]:
-    #                     print("\t" + str(message_erreur))
-    #             else:
-    #                 print("\tLa fonction s'appelle : " +
-    #                       res["nom_solution"])
-    #                 if "solutions_visibles" in res:
-    #                     print("\tENTREES VISIBLES DES ETUDIANTS:")
-    #                     for (entree, sortie) in res["solutions_visibles"]:
-    #                         print("\t\t" + res["nom_solution"] +
-    #                               "(" + str(entree) + ") renvoie " + str(sortie))
-    #                 if "solutions_invisibles" in res:
-    #                     print("\tENTREES INVISIBLES DES ETUDIANTS:")
-    #                     for (entree, sortie) in res["solutions_invisibles"]:
-    #                         print("\t\t" + res["nom_solution"] +
-    #                               "(" + str(entree) + ") renvoie " + str(sortie))
-    #             return res
-
     def getExercice(self, pathDossierModuleEns, options):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
-        #        image = exerciseur.construire()
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
         data = {"auteur" : "nobody", "titre":"default", "metaInfos": "{}", 'type': self.options["language"]}
         data.update(options)
