@@ -26,6 +26,7 @@ class EasyPythonDirective(Directive):
 
     def getExercice(self, pathDossierModuleEns, options):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
+        image = exerciseur.construire()
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
         data = {"auteur" : "nobody", "titre":"default", "metaInfos": "{}", 'type': self.options["language"]}
         data.update(options)
