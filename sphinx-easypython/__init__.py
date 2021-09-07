@@ -110,10 +110,13 @@ class EasyPythonDirective(Directive):
         if(self.options["language"] == "python"):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
-            exemples["exemples"] = donnees["metaInfos"]["sorties_visibles"]
-            zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
-                "(" + ','.join(donnees["metaInfos"]
-                               ["arguments"]) + "):\n    return None"
+            exemples["exemples"] = donnees["metaInfos"].get("sorties_visibles", [])
+            if "nom_solution" in donnees["metaInfos"] and "arguments" in donnees["metaInfo"]:
+                zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
+                    "(" + ','.join(donnees["metaInfos"]
+                                   ["arguments"]) + "):\n    return None"
+            else:
+                zoneExercice["prototype_solution"] = "Votre fonction"
             zoneExercice["hash"] = donnees["hashCode"]
             zoneExercice["language"] = self.options["language"]
             return [exemples, zoneExercice]
