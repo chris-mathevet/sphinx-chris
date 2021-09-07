@@ -53,13 +53,16 @@ class EasyPythonDirective(Directive):
 
     def getExercice(self, pathDossierModuleEns, options):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
+        #        image = exerciseur.construire()
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
-        data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"]}
+        data = {"auteur" : "nobody", "titre":"default", "metaInfos": "{}", 'type': self.options["language"]}
         data.update(options)
         res = requests.post("http://"+API_URI+"/api/exercice/",
                                 data=data, files=files)
         try:
             dico = res.json()
+            logger.warning(dico)
+            data["metaInfos"] = dico["metaInfos"]
             if 'traceback' in dico:
                 logger.error((dico["traceback"]))
             return dico
@@ -107,11 +110,11 @@ class EasyPythonDirective(Directive):
         }
         if donnees.get("metaInfos",None) and "erreurs" in donnees["metaInfos"]:
             logger.warning("ATTENTION, des erreurs sont renvoyees par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
-        if(self.options["language"] == "python"):
+        if(self.options["language"] in ["python", "Jacadi"]):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
             exemples["exemples"] = donnees["metaInfos"].get("sorties_visibles", [])
-            if "nom_solution" in donnees["metaInfos"] and "arguments" in donnees["metaInfo"]:
+            if "nom_solution" in donnees["metaInfos"] and "arguments" in donnees["metaInfos"]:
                 zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
                     "(" + ','.join(donnees["metaInfos"]
                                    ["arguments"]) + "):\n    return None"
