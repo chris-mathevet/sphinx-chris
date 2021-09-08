@@ -114,6 +114,7 @@ class EasyPythonDirective(Directive):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
             exemples["exemples"] = donnees["metaInfos"].get("sorties_visibles", [])
+            exemples["nom_solution"] = donnees["metaInfos"].get("nom_solution", "votre_fonction")
             if "nom_solution" in donnees["metaInfos"] and "arguments" in donnees["metaInfos"]:
                 zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
                     "(" + ','.join(donnees["metaInfos"]
@@ -140,8 +141,9 @@ class EasyPythonDirective(Directive):
 def visit_exemples_node(self, node):
     self.body.append("<ul class='list-group'>")
     for (entree, sortie) in node["exemples"]:
-        self.body.append("<li class='list-group-item'> Sur l'entr&eacute;e <code>" + str(
-            entree) + "</code> votre solution doit renvoyer <code>" + str(sortie) + "</code>.</li>")
+        arguments = ", ".join([repr(e) for e in entree])
+        appel = "{}({})".format(node["nom_solution"],arguments)
+        self.body.append("<li class='list-group-item'> L'appel <code>" + appel + "</code>, doit renvoyer <code>" + str(sortie) + "</code>.</li>")
     self.body.append("</ul>")
 
 highlighting={"Jacadi":"python", "PackagePython": "python"}
