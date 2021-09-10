@@ -82,11 +82,14 @@ class EasyPythonDirective(Directive):
         }
         if donnees.get("metaInfos",None) and "erreurs" in donnees["metaInfos"]:
             logger.warning("ATTENTION, des erreurs sont renvoyees par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
-        if(self.options["language"] in ["python", "Jacadi"]):
+        if(self.options["language"] in ["Jacadi"]):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
-            exemples["exemples"] = donnees["metaInfos"].get("sorties_visibles", [])
+            entrees = donnees["metaInfos"].get("entrees_visibles", [])
+            sorties = donnees["metaInfos"].get("sorties_visibles", [])
+            exemples["exemples"] = sorties
             exemples["nom_solution"] = donnees["metaInfos"].get("nom_solution", "votre_fonction")
+            exemples["arguments"] = donnees["metaInfos"].get("arguments", [])
             if "nom_solution" in donnees["metaInfos"] and "arguments" in donnees["metaInfos"]:
                 zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
                     "(" + ','.join(donnees["metaInfos"]
@@ -113,9 +116,9 @@ class EasyPythonDirective(Directive):
 def visit_exemples_node(self, node):
     self.body.append("<ul class='list-group'>")
     for (entree, sortie) in node["exemples"]:
-        arguments = ", ".join([repr(e) for e in entree])
-        appel = "{}({})".format(node["nom_solution"],arguments)
-        self.body.append("<li class='list-group-item'> L'appel <code>" + appel + "</code>, doit renvoyer <code>" + str(sortie) + "</code>.</li>")
+        arguments = ", ".join(entree)
+        appel = "{}({})".format(node["nom_solution"], arguments)
+        self.body.append("<li class='list-group-item'> L'appel <code>" + appel + "</code> doit renvoyer <code>" + str(sortie) + "</code>.</li>")
     self.body.append("</ul>")
 
 highlighting={"Jacadi":"python", "PackagePython": "python"}
