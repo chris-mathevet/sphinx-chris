@@ -24,42 +24,17 @@ class Exemples(nodes.Admonition, nodes.Element):
 
 class EasyPythonDirective(Directive):
 
-    # def test_exercice(self, pathFichierModuleEns, options):
-    #     from easypython_testeur.TesteurPython import TesteurPython
-    #     if options["language"] == "python":
-    #         print("Traitement du fichier" + str(pathFichierModuleEns))
-    #         with open(pathFichierModuleEns, "rb") as fichier_module_ens:
-    #             testeur = TesteurPython(fichier_module_ens.read(), "", False)
-    #             # print(testeur.test())
-    #             res = testeur.infos()
-    #             if "messagesErreur" in res:
-    #                 print("Fichier incorrect:")
-    #                 for message_erreur in res["messagesErreur"]:
-    #                     print("\t" + str(message_erreur))
-    #             else:
-    #                 print("\tLa fonction s'appelle : " +
-    #                       res["nom_solution"])
-    #                 if "solutions_visibles" in res:
-    #                     print("\tENTREES VISIBLES DES ETUDIANTS:")
-    #                     for (entree, sortie) in res["solutions_visibles"]:
-    #                         print("\t\t" + res["nom_solution"] +
-    #                               "(" + str(entree) + ") renvoie " + str(sortie))
-    #                 if "solutions_invisibles" in res:
-    #                     print("\tENTREES INVISIBLES DES ETUDIANTS:")
-    #                     for (entree, sortie) in res["solutions_invisibles"]:
-    #                         print("\t\t" + res["nom_solution"] +
-    #                               "(" + str(entree) + ") renvoie " + str(sortie))
-    #             return res
-
     def getExercice(self, pathDossierModuleEns, options):
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
-        data = {"auteur" : "nobody", "titre":"default", "metaInfos":"{}", 'type': self.options["language"]}
+        data = {"auteur" : "nobody", "titre":"default", "metaInfos": "{}", 'type': self.options["language"]}
         data.update(options)
         res = requests.post("http://"+API_URI+"/api/exercice/",
                                 data=data, files=files)
         try:
             dico = res.json()
+            logger.warning(dico)
+            data["metaInfos"] = dico["metaInfos"]
             if 'traceback' in dico:
                 logger.error((dico["traceback"]))
             return dico
@@ -107,13 +82,17 @@ class EasyPythonDirective(Directive):
         }
         if donnees.get("metaInfos",None) and "erreurs" in donnees["metaInfos"]:
             logger.warning("ATTENTION, des erreurs sont renvoyees par pcap-api:\n" + str(donnees["metaInfos"]["erreurs"]))
-        if(self.options["language"] == "python"):
+        if(self.options["language"] in ["python", "Jacadi"]):
             zoneExercice = EasyPythonNode()
             exemples = Exemples()
-            exemples["exemples"] = donnees["metaInfos"]["sorties_visibles"]
-            zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
-                "(" + ','.join(donnees["metaInfos"]
-                               ["arguments"]) + "):\n    return None"
+            exemples["exemples"] = donnees["metaInfos"].get("sorties_visibles", [])
+            exemples["nom_solution"] = donnees["metaInfos"].get("nom_solution", "votre_fonction")
+            if "nom_solution" in donnees["metaInfos"] and "arguments" in donnees["metaInfos"]:
+                zoneExercice["prototype_solution"] = "def " + donnees["metaInfos"]["nom_solution"] + \
+                    "(" + ','.join(donnees["metaInfos"]
+                                   ["arguments"]) + "):\n    return None"
+            else:
+                zoneExercice["prototype_solution"] = "Votre fonction"
             zoneExercice["hash"] = donnees["hashCode"]
             zoneExercice["language"] = self.options["language"]
             return [exemples, zoneExercice]
@@ -134,8 +113,9 @@ class EasyPythonDirective(Directive):
 def visit_exemples_node(self, node):
     self.body.append("<ul class='list-group'>")
     for (entree, sortie) in node["exemples"]:
-        self.body.append("<li class='list-group-item'> Sur l'entr&eacute;e <code>" + str(
-            entree) + "</code> votre solution doit renvoyer <code>" + str(sortie) + "</code>.</li>")
+        arguments = ", ".join([repr(e) for e in entree])
+        appel = "{}({})".format(node["nom_solution"],arguments)
+        self.body.append("<li class='list-group-item'> L'appel <code>" + appel + "</code>, doit renvoyer <code>" + str(sortie) + "</code>.</li>")
     self.body.append("</ul>")
 
 highlighting={"Jacadi":"python", "PackagePython": "python"}
