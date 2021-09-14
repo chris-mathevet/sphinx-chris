@@ -29,12 +29,12 @@ Le virtualenv est stocké dans un dossier qu'il ne sera pas nécessaire de versi
 Installation de l'extension sphinx-easypython
 ----------------------------------------------
 
-Au sein de ce virtualenv, installez sphinx-easypython et easypython_testeur :
+Au sein de ce virtualenv, installez sphinx-easypython et docker-exerciseur :
 
 .. code:: 
 
-        pip install -e git+https://gitlab.com/jrobert/easypython-testeur.git#egg=easypython_testeur 
-        pip install -e git+https://gitlab.com/jrobert/sphinx-easypython.git#egg=sphinx_easypython
+        pip install -e 
+        pip install -e git+https://gitlab.com/FlorentBecker2/docker-exerciseur.git@dev_fb#egg=docker_exerciseur
 
 
 
