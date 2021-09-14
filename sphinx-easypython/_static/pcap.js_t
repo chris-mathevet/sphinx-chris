@@ -197,7 +197,7 @@ function marquerReussi(hash, tentative)
     let currentNode = codeNode[hash];
     let bouton = currentNode.children("button")[0];
     bouton.innerHTML="Re-Envoyer";
-    let reussi = $(`<div class='pcap_feliciations'>${tentative.feedbacks_html}</div>`);
+    let reussi = $(`<div class='pcap_felicitations pcap_resultats'>${tentative.feedbacks_html}</div>`);
     if(currentNode.children(".pcap_resultats").length>0)
          currentNode.children(".pcap_resultats").replaceWith(reussi);
     else
