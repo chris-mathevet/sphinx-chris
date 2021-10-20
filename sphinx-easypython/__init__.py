@@ -48,9 +48,9 @@ class EasyPythonDirective(Directive):
 
     def yaml_option(texte):
         try:
-            return yaml.load(texte)
+            return yaml.safe_load(texte)
         except Exception as e:
-            raise ValueError("JSON parse error :" + str(e))
+            raise ValueError("YAML parse error :" + str(e))
 
     option_spec = {
         "language": directives.unchanged,
