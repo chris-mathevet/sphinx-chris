@@ -1,0 +1,3 @@
+sphinx>=1.8
+PyYAML>=3
+docker_exerciseur@ git+https://gitlab.com/FlorentBecker2/docker-exerciseur.git#egg=docker_exerciseur

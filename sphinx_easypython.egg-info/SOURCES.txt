@@ -1,0 +1,8 @@
+README.rst
+setup.py
+sphinx-easypython/__init__.py
+sphinx_easypython.egg-info/PKG-INFO
+sphinx_easypython.egg-info/SOURCES.txt
+sphinx_easypython.egg-info/dependency_links.txt
+sphinx_easypython.egg-info/requires.txt
+sphinx_easypython.egg-info/top_level.txt
