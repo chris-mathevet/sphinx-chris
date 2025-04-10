@@ -25,7 +25,7 @@ class Exemples(nodes.Admonition, nodes.Element):
 class EasyPythonDirective(Directive):
 
     def getExercice(self, pathDossierModuleEns, options):
-        logger.info("Get Exercice")
+        logger.info("Get Exercice, sources : " + pathDossierModuleEns)
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
         #        image = exerciseur.construire()
         files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
