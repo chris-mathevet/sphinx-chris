@@ -1,1 +1,1 @@
-https://gitlab.com/FlorentBecker2/docker-exerciseur.git#egg=docker_exerciseur
+https://github.com/chris-mathevet/exerciseur-chris.git#egg=docker_exerciseur
