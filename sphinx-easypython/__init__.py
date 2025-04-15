@@ -29,20 +29,20 @@ class EasyPythonDirective(Directive):
         logger.info("Isdir : " + str(os.path.isdir(pathDossierModuleEns)))
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
         #        image = exerciseur.construire()
-        files = {'moduleEns': exerciseur.empaquète(logger=logger).vers_cbor()}
-        data = {"auteur" : "nobody", "titre":"default", "metaInfos": "{}", 'type': self.options["language"]}
-        data.update(options)
-        res = requests.post("http://"+API_URI+"/api/exercice/",
-                                data=data, files=files)
-        try:
-            dico = res.json()
-            logger.warning(dico)
-            data["metaInfos"] = dico["metaInfos"]
-            if 'traceback' in dico:
-                logger.error((dico["traceback"]))
-            return dico
-        except Exception as e:
-                raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ res.content.decode("utf-8"))
+        # files = {'moduleEns': exerciseur.empaquète(logger=logger).vers_cbor()}
+        # data = {"auteur" : "nobody", "titre":"default", "metaInfos": "{}", 'type': self.options["language"]}
+        # data.update(options)
+        # res = requests.post("http://"+API_URI+"/api/exercice/",
+        #                         data=data, files=files)
+        # try:
+        #     dico = res.json()
+        #     logger.warning(dico)
+        #     data["metaInfos"] = dico["metaInfos"]
+        #     if 'traceback' in dico:
+        #         logger.error((dico["traceback"]))
+        #     return dico
+        # except Exception as e:
+        #         raise Exception("Requete: " + "http://"+API_URI+"/api/exercice/" + "  reponse: "+ res.content.decode("utf-8"))
 
     required_arguments = 1
     optional_arguments = 0
@@ -78,6 +78,8 @@ class EasyPythonDirective(Directive):
         self.options.update({"metainfos": metas})
         logger.info("tags:" + str(self.options.get("tags",[])))
         logger.info("OPTIONS:" + str(self.options) + relative_filename)
+
+        donnees = self.getExercice(absolute_filename, self.options)
 
         donnees = self.getExercice(absolute_filename, self.options) if env.app.config.easypython_production else {
             'hashCode': '1234',
