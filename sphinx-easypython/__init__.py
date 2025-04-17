@@ -28,7 +28,7 @@ class EasyPythonDirective(Directive):
         logger.info("Get Exercice, sources : " + pathDossierModuleEns)
         exerciseur = Exerciseur.avec_type(pathDossierModuleEns, self.options['language'], **(self.options.get("extra_yaml",{})))
             #    image = exerciseur.construire()
-        files = {'moduleEns': exerciseur.empaquète(logger=logger).vers_cbor()}
+        files = {'moduleEns': exerciseur.empaquète().vers_cbor()}
         data = {"auteur" : "nobody", "titre":"default", "metaInfos": "{}", 'type': self.options["language"]}
         data.update(options)
         res = requests.post("http://"+API_URI+"/api/exercice/",
