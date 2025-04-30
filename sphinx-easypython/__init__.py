@@ -65,6 +65,8 @@ class EasyPythonDirective(Directive):
     possibleMeta = {"nomclasse", "nom_classe_test"}
 
     def run(self):
+        if self.options["language"]=="python":
+            self.options["language"] = "Jacadi"
         env = self.state.document.settings.env
         (relative_filename, absolute_filename) = env.relfn2path(
             self.arguments[0])
